@@ -10,7 +10,6 @@ val targetJavaVersion = 8
 val shadowGroup = "top.mrxiaom.sweet.worlds.libs"
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
@@ -29,6 +28,7 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.4.0")
     implementation("net.kyori:adventure-text-minimessage:4.21.0")
     implementation("com.github.technicallycoded:FoliaLib:0.4.4")
+    implementation("org.quartz-scheduler:quartz:2.5.0")
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("top.mrxiaom:PluginBase:1.4.3")
 }
@@ -47,6 +47,7 @@ tasks {
             "top.mrxiaom.pluginbase" to "base",
             "net.kyori" to "kyori",
             "com.tcoded.folialib" to "folialib",
+            "org.quartz" to "quartz",
         ).forEach { (original, target) ->
             relocate(original, "$shadowGroup.$target")
         }
