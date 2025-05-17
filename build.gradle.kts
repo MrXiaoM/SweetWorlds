@@ -29,6 +29,7 @@ dependencies {
     implementation("net.kyori:adventure-text-minimessage:4.21.0")
     implementation("com.github.technicallycoded:FoliaLib:0.4.4")
     implementation("org.quartz-scheduler:quartz:2.5.0")
+    implementation("top.mrxiaom:EvalEx-j8:3.4.0")
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("top.mrxiaom:PluginBase:1.4.3")
 }
@@ -48,6 +49,7 @@ tasks {
             "net.kyori" to "kyori",
             "com.tcoded.folialib" to "folialib",
             "org.quartz" to "quartz",
+            "com.ezylang.evalex" to "evalex",
         ).forEach { (original, target) ->
             relocate(original, "$shadowGroup.$target")
         }
