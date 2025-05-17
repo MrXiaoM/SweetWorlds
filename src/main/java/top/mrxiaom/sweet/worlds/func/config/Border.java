@@ -55,7 +55,7 @@ public class Border {
             centerZ = value;
         }
         String rangeFormula = section.getString(world + ".border.range-formula");
-        if (isInvalidFormula(rangeFormula)) {
+        if (isInvalidFormula(parent, rangeFormula)) {
             parent.warn("[worlds.yml/" + world + "] 输入的 range-formula 公式无效");
             return null;
         }
@@ -68,22 +68,23 @@ public class Border {
                 // TODO: 代入更多数值，验证公式是否正确
                 // 目前只有部分预设数值
                 .with("daysOfMonth", now.getDayOfMonth())
-                .with("daysOfWeek", now.getDayOfWeek())
+                .with("daysOfWeek", now.getDayOfWeek().getValue())
                 .with("daysOfYear", now.getDayOfYear())
                 .with("dayOfMonth", now.getDayOfMonth())
-                .with("dayOfWeek", now.getDayOfWeek())
+                .with("dayOfWeek", now.getDayOfWeek().getValue())
                 .with("dayOfYear", now.getDayOfYear())
                 .with("date", now.getDayOfMonth())
-                .with("week", now.getDayOfWeek())
+                .with("week", now.getDayOfWeek().getValue())
                 .with("month", now.getMonthValue())
                 .with("year", now.getYear());
     }
 
-    public static boolean isInvalidFormula(String formula) {
+    public static boolean isInvalidFormula(AbstractModule parent, String formula) {
         try {
             Expression expression = createExpression(formula);
             return !expression.evaluate().isNumberValue();
         } catch (Throwable t) {
+            parent.warn("公式测试失败", t);
             return true;
         }
     }
