@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.entity.Player;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import top.mrxiaom.pluginbase.actions.ActionProviders;
@@ -33,6 +34,9 @@ public class ResetWorldJob implements Job {
         World world = config.world;
         File folder = world.getWorldFolder();
         WorldResetManager manager = WorldResetManager.inst();
+        for (Player player : world.getPlayers()) {
+            player.teleport(manager.getSpawnLocation());
+        }
 
         manager.markResetting(config.worldName, true);
 
