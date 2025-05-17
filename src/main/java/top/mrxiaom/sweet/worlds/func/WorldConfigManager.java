@@ -12,6 +12,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @AutoRegister
 public class WorldConfigManager extends AbstractModule {
@@ -27,6 +28,10 @@ public class WorldConfigManager extends AbstractModule {
 
     public Collection<WorldConfig> worlds() {
         return worldConfigMap.values();
+    }
+
+    public Set<String> keys() {
+        return worldConfigMap.keySet();
     }
 
     @Nullable
