@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.quartz.*;
 import top.mrxiaom.pluginbase.func.AutoRegister;
@@ -105,6 +106,15 @@ public class WorldResetManager extends AbstractModule implements Listener {
         }
     }
 
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        Player player = e.getPlayer();
+        String name = player.getWorld().getName();
+        if (resettingWorlds.contains(name) || bannedWorlds.contains(name)) {
+            player.teleport(getSpawnLocation());
+        }
+    }
+
     @EventHandler(priority = EventPriority.LOW)
     public void onTeleport(PlayerTeleportEvent e) {
         if (e.isCancelled()) return;
@@ -113,10 +123,12 @@ public class WorldResetManager extends AbstractModule implements Listener {
         String name = to == null || to.getWorld() == null ? null : to.getWorld().getName();
         if (name == null) return;
         if (resettingWorlds.contains(name)) {
+            t(player, "&e世界正在重置，请稍等片刻");
             e.setCancelled(true);
             return;
         }
         if (bannedWorlds.contains(name)) {
+            t(player, "&e休整中，请在服务器重启后再进入该世界");
             e.setCancelled(true);
             return;
         }
