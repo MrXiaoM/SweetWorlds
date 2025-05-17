@@ -7,7 +7,6 @@ import top.mrxiaom.pluginbase.actions.ActionProviders;
 import top.mrxiaom.pluginbase.api.IAction;
 import top.mrxiaom.sweet.worlds.func.AbstractModule;
 
-import java.text.ParseException;
 import java.util.List;
 
 public class AutoReset {
