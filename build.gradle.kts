@@ -32,6 +32,7 @@ dependencies {
     implementation("commons-io:commons-io:2.19.0")
     implementation("top.mrxiaom:EvalEx-j8:3.4.0")
     implementation("org.jetbrains:annotations:24.0.0")
+    implementation("org.slf4j:slf4j-api:2.0.16")
     implementation("top.mrxiaom:PluginBase:1.4.3")
 }
 java {
@@ -52,6 +53,7 @@ tasks {
             "org.quartz" to "quartz",
             "com.ezylang.evalex" to "evalex",
             "org.apache.commons" to "commons",
+            "org.slf4j" to "slf4j"
         ).forEach { (original, target) ->
             relocate(original, "$shadowGroup.$target")
         }
