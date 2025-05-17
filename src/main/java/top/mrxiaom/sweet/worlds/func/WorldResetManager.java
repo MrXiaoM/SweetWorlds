@@ -17,6 +17,9 @@ import top.mrxiaom.sweet.worlds.func.config.WorldConfig;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @AutoRegister
@@ -92,6 +95,9 @@ public class WorldResetManager extends AbstractModule implements Listener {
             try {
                 Date date = plugin.getQuartz().scheduleJob(jobDetail, trigger);
                 triggerKeys.add(trigger.getKey());
+                Instant instant = date.toInstant();
+                ZonedDateTime zoned = instant.atZone(ZoneId.systemDefault());
+                world.autoReset.nextTime = zoned.toLocalDateTime();
                 info("世界 " + world.worldName + " 将在 " + format.format(date) + " 重置");
             } catch (SchedulerException e) {
                 warn("为世界 " + world.worldName + " 创建重置任务失败", e);

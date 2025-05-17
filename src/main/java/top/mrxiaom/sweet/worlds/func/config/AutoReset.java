@@ -7,6 +7,7 @@ import top.mrxiaom.pluginbase.actions.ActionProviders;
 import top.mrxiaom.pluginbase.api.IAction;
 import top.mrxiaom.sweet.worlds.func.AbstractModule;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class AutoReset {
@@ -14,6 +15,7 @@ public class AutoReset {
     public final boolean resetSeed;
     public final boolean banUntilRestart;
     public final List<IAction> commands;
+    public LocalDateTime nextTime;
 
     public AutoReset(CronExpression cron, boolean resetSeed, boolean banUntilRestart, List<IAction> commands) {
         this.cron = cron;
