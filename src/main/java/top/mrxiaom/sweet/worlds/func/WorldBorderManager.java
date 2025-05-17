@@ -25,7 +25,9 @@ public class WorldBorderManager extends AbstractModule implements Listener {
     public void reloadConfig(MemoryConfiguration config) {
         borders.clear();
         for (WorldConfig world : WorldConfigManager.inst().worlds()) {
-            borders.put(world.worldName, world.border);
+            if (world.border.enable) {
+                borders.put(world.worldName, world.border);
+            }
         }
     }
 

@@ -65,7 +65,9 @@ public class ResetWorldJob implements Job {
         }
         manager.markResetting(config.worldName, false);
         if (newWorld != null) {
-            config.border.apply(newWorld);
+            if (config.border.enable) {
+                config.border.apply(newWorld);
+            }
             ActionProviders.run(plugin, null, config.autoReset.commands);
             return;
         }
