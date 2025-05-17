@@ -40,7 +40,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
                         "");
             }
             t(sender, "&a正在执行世界重置操作，详见服务器控制台");
-            ResetWorldJob.reset(plugin, config);
+            plugin.getScheduler().runTask(() -> ResetWorldJob.reset(plugin, config));
             return true;
         }
         if (args.length == 1 && "reload".equalsIgnoreCase(args[0]) && sender.isOp()) {
