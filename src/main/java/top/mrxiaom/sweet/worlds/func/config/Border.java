@@ -1,6 +1,9 @@
 package top.mrxiaom.sweet.worlds.func.config;
 
 import com.ezylang.evalex.Expression;
+import com.ezylang.evalex.data.EvaluationValue;
+import org.bukkit.World;
+import org.bukkit.WorldBorder;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.utils.Util;
@@ -18,6 +21,24 @@ public class Border {
         this.centerX = centerX;
         this.centerZ = centerZ;
         this.rangeFormula = rangeFormula;
+    }
+
+    public Double evaluateRange() {
+        try {
+            EvaluationValue result = createExpression(rangeFormula).evaluate();
+            return result.getNumberValue().doubleValue();
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    public void apply(World world) {
+        Double range = evaluateRange();
+        WorldBorder border = world.getWorldBorder();
+        border.setCenter(centerX, centerZ);
+        if (range != null) {
+            border.setSize(range);
+        }
     }
 
     @Nullable
@@ -41,13 +62,26 @@ public class Border {
         return new Border(enable, centerX, centerZ, rangeFormula);
     }
 
+    protected static Expression createExpression(String formula) {
+        LocalDateTime now = LocalDateTime.now();
+        return new Expression(formula)
+                // TODO: 代入更多数值，验证公式是否正确
+                // 目前只有部分预设数值
+                .with("daysOfMonth", now.getDayOfMonth())
+                .with("daysOfWeek", now.getDayOfWeek())
+                .with("daysOfYear", now.getDayOfYear())
+                .with("dayOfMonth", now.getDayOfMonth())
+                .with("dayOfWeek", now.getDayOfWeek())
+                .with("dayOfYear", now.getDayOfYear())
+                .with("date", now.getDayOfMonth())
+                .with("week", now.getDayOfWeek())
+                .with("month", now.getMonthValue())
+                .with("year", now.getYear());
+    }
+
     public static boolean isInvalidFormula(String formula) {
         try {
-            LocalDateTime now = LocalDateTime.now();
-            Expression expression = new Expression(formula)
-                    // TODO: 代入更多数值，验证公式是否正确
-                    // 目前只有部分预设数值
-                    .with("daysOfMonth", now.getDayOfMonth());
+            Expression expression = createExpression(formula);
             return !expression.evaluate().isNumberValue();
         } catch (Throwable t) {
             return true;

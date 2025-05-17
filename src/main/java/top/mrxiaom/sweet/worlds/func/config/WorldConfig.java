@@ -8,7 +8,7 @@ import top.mrxiaom.sweet.worlds.func.AbstractModule;
 
 public class WorldConfig {
     public final String worldName;
-    public final World world;
+    public World world;
     public final AutoReset autoReset;
     public final Border border;
 
