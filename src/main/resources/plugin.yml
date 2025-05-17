@@ -1,0 +1,11 @@
+name: SweetWorlds
+version: '${version}'
+main: top.mrxiaom.sweet.worlds.SweetWorlds
+api-version: 1.13
+depend: [  ]
+softdepend: [ PlaceholderAPI ]
+authors: [ MrXiaoM ]
+commands:
+  sweetworlds:
+    description: 'The main command of SweetWorlds'
+    aliases: [ sworlds, sw ]
