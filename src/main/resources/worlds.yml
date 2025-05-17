@@ -1,0 +1,25 @@
+# 世界配置
+worlds:
+  # 世界名示例
+  example:
+    # 世界自动重置设定
+    auto-reset:
+      # cron 表达式
+      # https://www.pppet.net/
+      # 每月1日零点执行一次
+      cron: '0 0 0 1 * ? *'
+      # 刷新种子
+      reset-seed: true
+      # 在刷新世界后，重启服务器后才能再进入世界
+      ban-until-restart: true
+      # 在刷新世界后，世界加载之后执行什么命令
+      commands: []
+    # 世界边界设定
+    border:
+      # 是否启用世界边界
+      # 在世界刷新后、玩家进入世界时更新边界大小
+      enable: false
+      # 边界中心
+      center: '-0.5, -0.5'
+      # 边界大小公式
+      range-formula: '10000 + CEILING(daysOfMonth * 1000)'

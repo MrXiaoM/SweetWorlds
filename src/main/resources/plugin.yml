@@ -3,7 +3,11 @@ version: '${version}'
 main: top.mrxiaom.sweet.worlds.SweetWorlds
 api-version: 1.13
 depend: [  ]
-softdepend: [ PlaceholderAPI ]
+softdepend:
+  - PlaceholderAPI
+  - Multiverse-Core
+  - Multiworld
+  - My_Worlds
 authors: [ MrXiaoM ]
 commands:
   sweetworlds:
