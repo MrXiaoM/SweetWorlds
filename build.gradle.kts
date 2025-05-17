@@ -25,12 +25,12 @@ dependencies {
 
     compileOnly("me.clip:placeholderapi:2.11.6")
 
-    implementation("net.kyori:adventure-api:4.20.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.4")
-    implementation("net.kyori:adventure-text-minimessage:4.20.0")
-    // implementation("com.github.technicallycoded:FoliaLib:0.4.4")
+    implementation("net.kyori:adventure-api:4.21.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.4.0")
+    implementation("net.kyori:adventure-text-minimessage:4.21.0")
+    implementation("com.github.technicallycoded:FoliaLib:0.4.4")
     implementation("org.jetbrains:annotations:24.0.0")
-    implementation("top.mrxiaom:PluginBase:1.4.0")
+    implementation("top.mrxiaom:PluginBase:1.4.3")
 }
 java {
     val javaVersion = JavaVersion.toVersion(targetJavaVersion)
@@ -46,7 +46,7 @@ tasks {
             "org.jetbrains.annotations" to "annotations.jetbrains",
             "top.mrxiaom.pluginbase" to "base",
             "net.kyori" to "kyori",
-            // "com.tcoded.folialib" to "folialib",
+            "com.tcoded.folialib" to "folialib",
         ).forEach { (original, target) ->
             relocate(original, "$shadowGroup.$target")
         }
