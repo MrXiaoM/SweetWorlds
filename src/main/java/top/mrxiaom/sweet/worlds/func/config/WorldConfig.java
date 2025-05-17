@@ -3,6 +3,8 @@ package top.mrxiaom.sweet.worlds.func.config;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.Nullable;
+import top.mrxiaom.sweet.worlds.func.AbstractModule;
 
 public class WorldConfig {
     public final String worldName;
@@ -17,11 +19,19 @@ public class WorldConfig {
         this.border = border;
     }
 
-    public static WorldConfig load(ConfigurationSection section, String key) {
-        AutoReset autoReset = AutoReset.load(section, key);
-        Border border = Border.load(section, key);
+    @Nullable
+    public static WorldConfig load(AbstractModule parent, ConfigurationSection section, String key) {
+        AutoReset autoReset = AutoReset.load(parent, section, key);
+        if (autoReset == null) {
+            return null;
+        }
+        Border border = Border.load(parent, section, key);
+        if (border == null) {
+            return null;
+        }
         World world = Bukkit.getWorld(key);
         if (world == null) {
+            parent.warn("[worlds.yml/" + key + "] 找不到世界 " + key);
             return null;
         }
         return new WorldConfig(key, world, autoReset, border);

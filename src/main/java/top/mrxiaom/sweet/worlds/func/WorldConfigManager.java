@@ -3,6 +3,7 @@ package top.mrxiaom.sweet.worlds.func;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.sweet.worlds.SweetWorlds;
 import top.mrxiaom.sweet.worlds.func.config.WorldConfig;
@@ -28,6 +29,11 @@ public class WorldConfigManager extends AbstractModule {
         return worldConfigMap.values();
     }
 
+    @Nullable
+    public WorldConfig getWorld(String name) {
+        return worldConfigMap.get(name);
+    }
+
     @Override
     public void reloadConfig(MemoryConfiguration pluginConfig) {
         File file = plugin.resolve("./worlds.yml");
@@ -38,10 +44,8 @@ public class WorldConfigManager extends AbstractModule {
         worldConfigMap.clear();
         ConfigurationSection section = config.getConfigurationSection("worlds");
         if (section != null) for (String key : section.getKeys(false)) {
-            WorldConfig loaded = WorldConfig.load(section, key);
-            if (loaded == null) {
-                warn("[worlds.yml] 找不到世界 " + key);
-            } else {
+            WorldConfig loaded = WorldConfig.load(this, section, key);
+            if (loaded != null) {
                 worldConfigMap.put(loaded.worldName, loaded);
             }
         }
