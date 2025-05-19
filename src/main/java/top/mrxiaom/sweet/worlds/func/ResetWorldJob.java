@@ -18,11 +18,14 @@ import java.util.Random;
 public class ResetWorldJob implements Job {
     @Override
     public void execute(JobExecutionContext ctx) {
-        String worldName = ctx.getJobDetail().getKey().getName();
+        String world = ctx.getTrigger().getJobDataMap().getString("world");
         WorldConfigManager manager = WorldConfigManager.inst();
-        WorldConfig config = manager.getWorld(worldName);
+        WorldConfig config = manager.getWorld(world);
         if (config != null) {
+            manager.plugin.info("正在自动重置世界 " + world);
             manager.plugin.getScheduler().runTask(() -> reset(config));
+        } else {
+            manager.plugin.warn("找不到世界配置 " + world);
         }
     }
 

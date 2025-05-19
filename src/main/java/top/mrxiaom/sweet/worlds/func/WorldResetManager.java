@@ -30,6 +30,9 @@ public class WorldResetManager extends AbstractModule implements Listener {
     private Location spawnLocation;
     private final Set<String> resettingWorlds = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
     private final Set<String> bannedWorlds = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+    private final JobDetail jobDetail = JobBuilder.newJob(ResetWorldJob.class)
+            .withIdentity("reset-world")
+            .build();
     public WorldResetManager(SweetWorlds plugin) {
         super(plugin);
         registerEvents();
@@ -78,20 +81,18 @@ public class WorldResetManager extends AbstractModule implements Listener {
             double z = config.getDouble("server-spawn.z", -0.5);
             spawnLocation = new Location(world, x, y, z);
         }
-        for (TriggerKey key : triggerKeys) try {
-            plugin.getQuartz().unscheduleJob(key);
+        try {
+            plugin.getQuartz().unscheduleJobs(triggerKeys);
         } catch (SchedulerException e) {
-            warn("取消任务 " + key + " 失败", e);
+            warn("取消任务失败", e);
         }
         triggerKeys.clear();
         Collection<WorldConfig> worlds = WorldConfigManager.inst().worlds();
         for (WorldConfig world : worlds) {
-            JobDetail jobDetail = JobBuilder.newJob(ResetWorldJob.class)
-                    .withIdentity(world.worldName, "SweetWorlds-reset")
-                    .build();
             CronTrigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(world.worldName, "SweetWorlds-reset")
                     .withSchedule(CronScheduleBuilder.cronSchedule(world.autoReset.cron))
+                    .usingJobData("world", world.worldName)
                     .build();
             try {
                 Date date = plugin.getQuartz().scheduleJob(jobDetail, trigger);
