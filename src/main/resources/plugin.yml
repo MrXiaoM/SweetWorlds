@@ -4,9 +4,13 @@ main: top.mrxiaom.sweet.worlds.SweetWorlds
 api-version: 1.13
 softdepend:
   - PlaceholderAPI
+
   - Multiverse-Core
   - Multiworld
   - My_Worlds
+
+  - CMI
+  - Essentials
 authors: [ MrXiaoM ]
 folia-supported: true
 commands:

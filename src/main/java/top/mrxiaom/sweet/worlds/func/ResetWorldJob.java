@@ -2,6 +2,7 @@ package top.mrxiaom.sweet.worlds.func;
 
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
@@ -9,6 +10,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import top.mrxiaom.pluginbase.actions.ActionProviders;
 import top.mrxiaom.sweet.worlds.SweetWorlds;
+import top.mrxiaom.sweet.worlds.func.config.PluginData;
 import top.mrxiaom.sweet.worlds.func.config.WorldConfig;
 
 import java.io.File;
@@ -44,8 +46,9 @@ public class ResetWorldJob implements Job {
         World world = config.world;
         File folder = world.getWorldFolder();
         WorldResetManager manager = WorldResetManager.inst();
+        Location spawn = PluginData.inst().getSpawnLocation();
         for (Player player : world.getPlayers()) {
-            player.teleport(manager.getSpawnLocation());
+            player.teleport(spawn);
         }
 
         manager.markResetting(config.worldName, true);

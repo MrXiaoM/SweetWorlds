@@ -1,9 +1,6 @@
 package top.mrxiaom.sweet.worlds.func;
 
-import com.google.common.collect.Iterables;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,6 +11,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.quartz.*;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.sweet.worlds.SweetWorlds;
+import top.mrxiaom.sweet.worlds.func.config.PluginData;
 import top.mrxiaom.sweet.worlds.func.config.WorldConfig;
 
 import java.time.Instant;
@@ -24,7 +22,6 @@ import java.util.*;
 @AutoRegister
 public class WorldResetManager extends AbstractModule implements Listener {
     private final List<TriggerKey> triggerKeys = new ArrayList<>();
-    private Location spawnLocation;
     private final Set<String> resettingWorlds = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
     private final Set<String> bannedWorlds = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
     private final JobDetail jobDetail = JobBuilder.newJob(ResetWorldJob.class)
@@ -51,28 +48,8 @@ public class WorldResetManager extends AbstractModule implements Listener {
         }
     }
 
-    public Location getSpawnLocation() {
-        return spawnLocation;
-    }
-
     @Override
     public void reloadConfig(MemoryConfiguration config) {
-        String worldName = config.getString("server-spawn.world", "world");
-        {
-            World world = Bukkit.getWorld(worldName);
-            if (world == null) {
-                world = Iterables.getFirst(Bukkit.getWorlds(), null);
-                if (world != null) {
-                    warn("找不到主城世界 " + worldName + "，将改用第一个世界 " + world.getName());
-                } else {
-                    warn("找不到主城世界 " + worldName);
-                }
-            }
-            double x = config.getDouble("server-spawn.x", -0.5);
-            double y = config.getDouble("server-spawn.y", 70);
-            double z = config.getDouble("server-spawn.z", -0.5);
-            spawnLocation = new Location(world, x, y, z);
-        }
         try {
             plugin.getQuartz().unscheduleJobs(triggerKeys);
         } catch (SchedulerException e) {
@@ -109,7 +86,7 @@ public class WorldResetManager extends AbstractModule implements Listener {
         Player player = e.getPlayer();
         String name = player.getWorld().getName();
         if (resettingWorlds.contains(name) || bannedWorlds.contains(name)) {
-            player.teleport(getSpawnLocation());
+            player.teleport(PluginData.inst().getSpawnLocation());
         }
     }
 

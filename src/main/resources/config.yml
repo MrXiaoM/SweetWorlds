@@ -1,11 +1,5 @@
 
 date-format: 'yyyy/MM/dd HH:mm:ss'
-# 重置服务器时，将玩家传回主城
-server-spawn:
-  world: world
-  x: -0.5
-  y: 70
-  z: -0.5
 
 time-units:
   days: '天'
