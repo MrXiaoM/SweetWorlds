@@ -13,6 +13,7 @@ import top.mrxiaom.sweet.worlds.func.config.WorldConfig;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Random;
 
 public class ResetWorldJob implements Job {
@@ -24,6 +25,12 @@ public class ResetWorldJob implements Job {
         if (config != null) {
             manager.plugin.info("正在自动重置世界 " + world);
             manager.plugin.getScheduler().runTask(() -> reset(config));
+            Date next = ctx.getTrigger().getNextFireTime();
+            if (next == null) {
+                manager.plugin.info("这是最后一次重置");
+            } else {
+                manager.plugin.info("下次将在 " + manager.format(next) + " 重置世界");
+            }
         } else {
             manager.plugin.warn("找不到世界配置 " + world);
         }
@@ -49,8 +56,10 @@ public class ResetWorldJob implements Job {
         // 卸载世界 并删除世界
         Bukkit.unloadWorld(world, true);
         config.world = null;
+        plugin.info("世界 " + config.worldName + " 已卸载");
         try {
             FileUtils.deleteDirectory(folder);
+            plugin.info("世界文件夹 " + folder + " 已删除");
         } catch (IOException e) {
             plugin.warn("删除世界 " + config.worldName + " 时出现异常", e);
         }
@@ -59,6 +68,7 @@ public class ResetWorldJob implements Job {
         if (config.autoReset.resetSeed) {
             creator.seed((new Random()).nextLong());
         }
+        plugin.info("正在创建世界 " + config.worldName);
         World newWorld = Bukkit.createWorld(creator);
 
         // 善后工作
@@ -71,6 +81,7 @@ public class ResetWorldJob implements Job {
             if (config.border.enable) {
                 config.border.apply(newWorld);
             }
+            plugin.info("世界 " + config.worldName + " 已重置!");
             ActionProviders.run(plugin, null, config.autoReset.commands);
             return;
         }

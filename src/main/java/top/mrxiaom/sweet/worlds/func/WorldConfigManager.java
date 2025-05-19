@@ -9,14 +9,14 @@ import top.mrxiaom.sweet.worlds.SweetWorlds;
 import top.mrxiaom.sweet.worlds.func.config.WorldConfig;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @AutoRegister
 public class WorldConfigManager extends AbstractModule {
     private final Map<String, WorldConfig> worldConfigMap = new HashMap<>();
+    private DateFormat format;
     public WorldConfigManager(SweetWorlds plugin) {
         super(plugin);
     }
@@ -39,8 +39,17 @@ public class WorldConfigManager extends AbstractModule {
         return worldConfigMap.get(name);
     }
 
+    public String format(Date date) {
+        return format.format(date);
+    }
+
     @Override
     public void reloadConfig(MemoryConfiguration pluginConfig) {
+        try {
+            format = new SimpleDateFormat(pluginConfig.getString("date-format", "yyyy/MM/dd HH:mm:ss"));
+        } catch (Throwable t) {
+            format = SimpleDateFormat.getDateTimeInstance();
+        }
         File file = plugin.resolve("./worlds.yml");
         if (!file.exists()) {
             plugin.saveResource("worlds.yml");

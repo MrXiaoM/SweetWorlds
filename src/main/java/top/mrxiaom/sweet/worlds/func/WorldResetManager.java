@@ -16,8 +16,6 @@ import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.sweet.worlds.SweetWorlds;
 import top.mrxiaom.sweet.worlds.func.config.WorldConfig;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -26,7 +24,6 @@ import java.util.*;
 @AutoRegister
 public class WorldResetManager extends AbstractModule implements Listener {
     private final List<TriggerKey> triggerKeys = new ArrayList<>();
-    private DateFormat format;
     private Location spawnLocation;
     private final Set<String> resettingWorlds = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
     private final Set<String> bannedWorlds = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
@@ -60,11 +57,6 @@ public class WorldResetManager extends AbstractModule implements Listener {
 
     @Override
     public void reloadConfig(MemoryConfiguration config) {
-        try {
-            format = new SimpleDateFormat(config.getString("date-format", "yyyy/MM/dd HH:mm:ss"));
-        } catch (Throwable t) {
-            format = SimpleDateFormat.getDateTimeInstance();
-        }
         String worldName = config.getString("server-spawn.world", "world");
         {
             World world = Bukkit.getWorld(worldName);
@@ -87,7 +79,8 @@ public class WorldResetManager extends AbstractModule implements Listener {
             warn("取消任务失败", e);
         }
         triggerKeys.clear();
-        Collection<WorldConfig> worlds = WorldConfigManager.inst().worlds();
+        WorldConfigManager manager = WorldConfigManager.inst();
+        Collection<WorldConfig> worlds = manager.worlds();
         for (WorldConfig world : worlds) {
             CronTrigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(world.worldName, "SweetWorlds-reset")
@@ -96,11 +89,15 @@ public class WorldResetManager extends AbstractModule implements Listener {
                     .build();
             try {
                 Date date = plugin.getQuartz().scheduleJob(jobDetail, trigger);
-                triggerKeys.add(trigger.getKey());
-                Instant instant = date.toInstant();
-                ZonedDateTime zoned = instant.atZone(ZoneId.systemDefault());
-                world.autoReset.nextTime = zoned.toLocalDateTime();
-                info("世界 " + world.worldName + " 将在 " + format.format(date) + " 重置");
+                if (date == null) {
+                    info("世界 " + world.worldName + " 没有下次重置时间");
+                } else {
+                    triggerKeys.add(trigger.getKey());
+                    Instant instant = date.toInstant();
+                    ZonedDateTime zoned = instant.atZone(ZoneId.systemDefault());
+                    world.autoReset.nextTime = zoned.toLocalDateTime();
+                    info("世界 " + world.worldName + " 将在 " + manager.format(date) + " 重置");
+                }
             } catch (SchedulerException e) {
                 warn("为世界 " + world.worldName + " 创建重置任务失败", e);
             }

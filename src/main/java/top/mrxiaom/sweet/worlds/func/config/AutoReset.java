@@ -15,7 +15,7 @@ public class AutoReset {
     public final boolean resetSeed;
     public final boolean banUntilRestart;
     public final List<IAction> commands;
-    public LocalDateTime nextTime;
+    public @Nullable LocalDateTime nextTime;
 
     public AutoReset(CronExpression cron, boolean resetSeed, boolean banUntilRestart, List<IAction> commands) {
         this.cron = cron;
