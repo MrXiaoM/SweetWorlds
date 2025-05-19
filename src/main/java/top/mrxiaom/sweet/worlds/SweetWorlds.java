@@ -33,6 +33,7 @@ public class SweetWorlds extends BukkitPlugin {
             DirectSchedulerFactory factory = DirectSchedulerFactory.getInstance();
             factory.createVolatileScheduler(10);
             this.quartz = factory.getScheduler();
+            this.quartz.start();
         } catch (SchedulerException e) {
             throw new RuntimeException("无法初始化 Quartz 调度器", e);
         }
