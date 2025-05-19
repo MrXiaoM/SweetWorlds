@@ -4,7 +4,9 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.DirectSchedulerFactory;
 import top.mrxiaom.pluginbase.BukkitPlugin;
+import top.mrxiaom.pluginbase.utils.PAPI;
 import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
+import top.mrxiaom.sweet.worlds.depend.Placeholders;
 
 public class SweetWorlds extends BukkitPlugin {
     public static SweetWorlds getInstance() {
@@ -41,6 +43,9 @@ public class SweetWorlds extends BukkitPlugin {
 
     @Override
     protected void afterEnable() {
+        if (PAPI.isEnabled()) {
+            new Placeholders(this).register();
+        }
         getLogger().info("SweetWorlds 加载完毕");
     }
 

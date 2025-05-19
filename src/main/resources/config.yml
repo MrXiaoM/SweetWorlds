@@ -6,3 +6,13 @@ server-spawn:
   x: -0.5
   y: 70
   z: -0.5
+
+time-units:
+  days: '天'
+  day: '天'
+  hours: '时'
+  hour: '时'
+  minutes: '分'
+  minute: '分'
+  seconds: '秒'
+  second: '秒'
