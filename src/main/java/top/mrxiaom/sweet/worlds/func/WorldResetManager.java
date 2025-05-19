@@ -10,6 +10,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.quartz.*;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.utils.Pair;
+import top.mrxiaom.sweet.worlds.Messages;
 import top.mrxiaom.sweet.worlds.SweetWorlds;
 import top.mrxiaom.sweet.worlds.func.config.PluginData;
 import top.mrxiaom.sweet.worlds.func.config.WorldConfig;
@@ -30,6 +32,11 @@ public class WorldResetManager extends AbstractModule implements Listener {
     public WorldResetManager(SweetWorlds plugin) {
         super(plugin);
         registerEvents();
+    }
+
+    @Override
+    public int priority() {
+        return 1001;
     }
 
     public void markResetting(String worldName, boolean state) {
@@ -67,13 +74,13 @@ public class WorldResetManager extends AbstractModule implements Listener {
             try {
                 Date date = plugin.getQuartz().scheduleJob(jobDetail, trigger);
                 if (date == null) {
-                    info("世界 " + world.worldName + " 没有下次重置时间");
+                    info(Messages.logs__timer__next__end.str(Pair.of("%world%", world.worldName)));
                 } else {
                     triggerKeys.add(trigger.getKey());
                     Instant instant = date.toInstant();
                     ZonedDateTime zoned = instant.atZone(ZoneId.systemDefault());
                     world.autoReset.nextTime = zoned.toLocalDateTime();
-                    info("世界 " + world.worldName + " 将在 " + manager.format(date) + " 重置");
+                    info(Messages.logs__timer__next__time.str(Pair.of("%world%", world.worldName), Pair.of("%time%", manager.format(date))));
                 }
             } catch (SchedulerException e) {
                 warn("为世界 " + world.worldName + " 创建重置任务失败", e);
@@ -98,12 +105,12 @@ public class WorldResetManager extends AbstractModule implements Listener {
         String name = to == null || to.getWorld() == null ? null : to.getWorld().getName();
         if (name == null) return;
         if (resettingWorlds.contains(name)) {
-            t(player, "&e世界正在重置，请稍等片刻");
+            Messages.teleport__resetting.tm(player);
             e.setCancelled(true);
             return;
         }
         if (bannedWorlds.contains(name)) {
-            t(player, "&e休整中，请在服务器重启后再进入该世界");
+            Messages.teleport__banned.tm(player);
             e.setCancelled(true);
             return;
         }

@@ -4,6 +4,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.DirectSchedulerFactory;
 import top.mrxiaom.pluginbase.BukkitPlugin;
+import top.mrxiaom.pluginbase.func.LanguageManager;
 import top.mrxiaom.pluginbase.utils.PAPI;
 import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 import top.mrxiaom.sweet.worlds.depend.Placeholders;
@@ -39,6 +40,13 @@ public class SweetWorlds extends BukkitPlugin {
         } catch (SchedulerException e) {
             throw new RuntimeException("无法初始化 Quartz 调度器", e);
         }
+    }
+
+    @Override
+    protected void beforeEnable() {
+        LanguageManager.inst()
+                .setLangFile("messages.yml")
+                .register(Messages.class, Messages::holder);
     }
 
     @Override

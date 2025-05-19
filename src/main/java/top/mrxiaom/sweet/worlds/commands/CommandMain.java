@@ -9,6 +9,8 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.utils.Pair;
+import top.mrxiaom.sweet.worlds.Messages;
 import top.mrxiaom.sweet.worlds.SweetWorlds;
 import top.mrxiaom.sweet.worlds.func.AbstractModule;
 import top.mrxiaom.sweet.worlds.func.ResetWorldJob;
@@ -31,24 +33,19 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
         if (args.length >= 2 && "reset".equalsIgnoreCase(args[0]) && sender.isOp()) {
             WorldConfig config = WorldConfigManager.inst().getWorld(args[1]);
             if (config == null) {
-                return t(sender, "&e没有这个世界的配置");
+                return Messages.commands__reset__not_found.tm(sender);
             }
             if (args.length != 3 || !"confirm".equalsIgnoreCase(args[2])) {
-                return t(sender, "",
-                        "  &e警告，你正在进行世界重置操作。",
-                        "  &e这个操作无法被撤销，你确定要这么做吗？",
-                        "  &f要进行世界重置，请执行以下命令",
-                        "  &b/sweetworlds reset " + args[1] + " confirm",
-                        "");
+                return Messages.commands__reset__confirm.tm(sender, Pair.of("%world%", args[1]));
             }
-            t(sender, "&a正在执行世界重置操作，详见服务器控制台");
-            info("正在手动重置世界 " + config.worldName);
+            Messages.commands__reset__start.tm(sender);
+            info(Messages.logs__reset__manual.str(Pair.of("%world%", config.worldName)));
             plugin.getScheduler().runTask(() -> ResetWorldJob.reset(plugin, config));
             return true;
         }
         if (args.length == 1 && "reload".equalsIgnoreCase(args[0]) && sender.isOp()) {
             plugin.reloadConfig();
-            return t(sender, "&a配置文件已重载");
+            return Messages.commands__reload.tm(sender);
         }
         return true;
     }

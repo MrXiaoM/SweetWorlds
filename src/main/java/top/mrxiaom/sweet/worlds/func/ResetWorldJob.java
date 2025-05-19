@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import top.mrxiaom.pluginbase.actions.ActionProviders;
+import top.mrxiaom.pluginbase.utils.Pair;
+import top.mrxiaom.sweet.worlds.Messages;
 import top.mrxiaom.sweet.worlds.SweetWorlds;
 import top.mrxiaom.sweet.worlds.func.config.PluginData;
 import top.mrxiaom.sweet.worlds.func.config.WorldConfig;
@@ -25,16 +27,16 @@ public class ResetWorldJob implements Job {
         WorldConfigManager manager = WorldConfigManager.inst();
         WorldConfig config = manager.getWorld(world);
         if (config != null) {
-            manager.plugin.info("正在自动重置世界 " + world);
+            manager.plugin.info(Messages.logs__reset__auto.str(Pair.of("%world%", world)));
             manager.plugin.getScheduler().runTask(() -> reset(config));
             Date next = ctx.getTrigger().getNextFireTime();
             if (next == null) {
-                manager.plugin.info("这是最后一次重置");
+                manager.plugin.info(Messages.logs__reset__next__end.str());
             } else {
-                manager.plugin.info("下次将在 " + manager.format(next) + " 重置世界");
+                manager.plugin.info(Messages.logs__reset__next__time.str(Pair.of("%time%", manager.format(next))));
             }
         } else {
-            manager.plugin.warn("找不到世界配置 " + world);
+            manager.plugin.warn(Messages.logs__reset__not_found.str(Pair.of("%world%", world)));
         }
     }
 
@@ -48,6 +50,7 @@ public class ResetWorldJob implements Job {
         WorldResetManager manager = WorldResetManager.inst();
         Location spawn = PluginData.inst().getSpawnLocation();
         for (Player player : world.getPlayers()) {
+            Messages.teleport__resetting.tm(player);
             player.teleport(spawn);
         }
 
@@ -59,19 +62,19 @@ public class ResetWorldJob implements Job {
         // 卸载世界 并删除世界
         Bukkit.unloadWorld(world, true);
         config.world = null;
-        plugin.info("世界 " + config.worldName + " 已卸载");
+        plugin.warn(Messages.logs__world__unloaded.str(Pair.of("%world%", config.worldName)));
         try {
             FileUtils.deleteDirectory(folder);
-            plugin.info("世界文件夹 " + folder + " 已删除");
+            plugin.warn(Messages.logs__world__deleted.str(Pair.of("%folder%", folder)));
         } catch (IOException e) {
-            plugin.warn("删除世界 " + config.worldName + " 时出现异常", e);
+            plugin.warn(Messages.logs__world__delete_error.str(Pair.of("%world%", config.worldName)));
         }
 
         // 重新创建世界
         if (config.autoReset.resetSeed) {
             creator.seed((new Random()).nextLong());
         }
-        plugin.info("正在创建世界 " + config.worldName);
+        plugin.warn(Messages.logs__world__creating.str(Pair.of("%world%", config.worldName)));
         World newWorld = Bukkit.createWorld(creator);
 
         // 善后工作
@@ -84,10 +87,10 @@ public class ResetWorldJob implements Job {
             if (config.border.enable) {
                 config.border.apply(newWorld);
             }
-            plugin.info("世界 " + config.worldName + " 已重置!");
+            plugin.warn(Messages.logs__reset__done.str(Pair.of("%world%", config.worldName)));
             ActionProviders.run(plugin, null, config.autoReset.commands);
             return;
         }
-        plugin.warn("世界 " + config.worldName + " 重新生成失败!");
+        plugin.warn(Messages.logs__reset__failed.str(Pair.of("%world%", config.worldName)));
     }
 }
