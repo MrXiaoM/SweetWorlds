@@ -2,13 +2,13 @@ name: SweetWorlds
 version: '${version}'
 main: top.mrxiaom.sweet.worlds.SweetWorlds
 api-version: 1.13
-depend: [  ]
 softdepend:
   - PlaceholderAPI
   - Multiverse-Core
   - Multiworld
   - My_Worlds
 authors: [ MrXiaoM ]
+folia-supported: true
 commands:
   sweetworlds:
     description: 'The main command of SweetWorlds'
